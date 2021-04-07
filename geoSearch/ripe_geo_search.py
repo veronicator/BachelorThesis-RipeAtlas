@@ -5,13 +5,13 @@ import csv
 import argparse
 from datetime import datetime
 from ripe.atlas.cousteau import AtlasResultsRequest
-from geo_msm import GeoPing
+import geo_measurement as geo
 
 ### Global ###
 base_url = "https://atlas.ripe.net/api/v2/"
 
-results_dir = '../ripe_geo_results/'
-plots_dir = results_dir + 'eda_plot_results/'
+results_dir = './ripe_geo_results/'
+plots_dir = results_dir + 'ripe_geo_plots/'
 
 probe_ids_list = []
 msm_ids_list = []
@@ -72,20 +72,20 @@ def save_msm_list(msm_file, results):
     """
     global msm_ids_list
     #print("save_msm_list")
-    #with open(filename, 'w') as results_file:
-    #    writer = csv.DictWriter(results_file, fieldnames=['msm_id', 'msm_result', 'target', 'target_ip', 'msm_type'])
-    #    writer.writerow(dict_res)
 
     with open(msm_file, 'a') as results_file:
+
+        writer = csv.DictWriter(results_file, fieldnames=['msm_id', 'target', 'target_ip', 'msm_type'])
         
         for res in results['results']:
             if res['id'] not in msm_ids_list:
                 msm_ids_list.append(res['id'])
-                #dict_res = {'msm_id': res['id'], 'msm_result': res['result'], 'target': res['target'], 'target_ip': res['target_ip'], 'msm_type': res['type']}
-                #
-                str_res = str(res['id']) + "," + str(res['result']) + "," + str(res['target']) + "," + str(res['target_ip']) + "," + str(res['type']) + ";\n"
-                        
-                results_file.write(str_res)
+                #'msm_result': res['result'], 
+                dict_res = {'msm_id': res['id'], 'target': res['target'], 'target_ip': res['target_ip'], 'msm_type': res['type']}
+                writer.writerow(dict_res)
+
+                #str_res = str(res['id']) + "," + str(res['result']) + "," + str(res['target']) + "," + str(res['target_ip']) + "," + str(res['type']) + ";\n"       
+                #results_file.write(str_res)
 
 #------------------------------------------------------------
 
@@ -96,7 +96,7 @@ def find_probes(probes_file, lat_lte, lat_gte, lon_lte, lon_gte, is_target = Fal
     probes_file - file in cui salvare i dettagli delle probe
     """
 
-    fieldnames = ['prb_id', 'address_v4', 'address_v6', 'asn_v4,asn_v6']
+    fieldnames = ['prb_id', 'address_v4', 'address_v6', 'asn_v4', 'asn_v6']
     if is_target:
         fieldnames.append('msm_url') 
     #fieldnames = fieldnames + ",msm_url" if is_target else fieldnames
@@ -159,7 +159,7 @@ def find_msm_list(msm_file, type_msm, target, start_time, stop_time, optional_fi
 
 #------------------------------------------------------------
 
-def find_msm_results(results_file, msm_id, start_time, stop_time):
+def find_msm_results(geo_msm, msm_id, start_time, stop_time):
     """
     ottiene i dati contenuti in 'result_url', filtrando i risultati per probe sorgenti e per timestamp
     'results_file': file in cui salvare i risultati
@@ -169,9 +169,9 @@ def find_msm_results(results_file, msm_id, start_time, stop_time):
     global probe_ids_list
 
     print("find_msm_results")
-
-    parameters = {'probe_ids': probes_ids_list, 'start': start_time, 'stop': stop_time}
-
+    """
+    parameters = {'probe_ids': probe_ids_list, 'start': start_time, 'stop': stop_time}
+    
     try:
         results = requests.get(result_url, params=parameters)
         #print('result url', results.url)
@@ -183,7 +183,7 @@ def find_msm_results(results_file, msm_id, start_time, stop_time):
                 
     except:
         print("find_results failed")
-
+    """
     kwargs = {
         "msm_id": msm_id,
         "start": start_time,
@@ -194,73 +194,14 @@ def find_msm_results(results_file, msm_id, start_time, stop_time):
     is_success, results = AtlasResultsRequest(**kwargs).create()
 
     if is_success:
-        with open(results_file, 'a') as msm_result:
+        with open(geo_msm.results_file, 'a') as msm_result:
             for res in results:
-                print('rtt', PingResult(res).rtt_max)
+                #print('rtt', PingResult(res).rtt_max)
                 msm_result.write(json.dumps(res) + "\n")
+                #geo_msm.parse_msm(res, src_probes, dest_probes)
     else:
         print("find_results failed")
 
-#------------------------------------------------------------
-
-def parse_ping(results_file, tab_ping_v4, tab_ping_v6):
-    """
-        eda ping
-    """
-    print('parse_ping')
-    
-    ping_v4 = []
-    ping_v6 = []
-
-    with open(results_file) as results:
-        print('open results_file')
-
-        for res in results.readlines():
-            parsed_result = PingResult(res)
-            af = str(parsed_result.af)
-            print("origin", parsed_result.origin)
-            print("address", src_probes[str(parsed_result.probe_id)]['address_v' + af])
-
-            if parsed_result.origin == src_probes[str(parsed_result.probe_id)]['address_v' + af]:
-                
-                #    vengono selezionati soltanti i risultati il cui indirizzo sorgente 
-                #    corrisponde all'attuale indirizzo della relativa probe,                            
-                #    tutti gli altri vengono scartati
-                
-                ping_res = {'af': parsed_result.af, 'ip_src': parsed_result.origin, 'ip_dest': parsed_result.destination_address, 
-                    'asn_src': src_probes[str(parsed_result.probe_id)]['asn_v' + af], 'asn_dest': dest_probes[parsed_result.destination_address], 
-                    'timestamp': parsed_result.created_timestamp, 'rtt_min': parsed_result.rtt_min}
-                
-                ping_v4.append(ping_res) if parsed_result.af == 4 else ping_v6.append(ping_res)
-    
-    #for res in ping_v4:
-    #    print('v4', res)
-    #for res in ping_v6:
-    #    print('v6', res)
-
-    fields = ['af','ip_src','ip_dest','asn_src','asn_dest','timestamp','rtt_min']
-
-    with open(tab_ping_v4, 'w') as csvf:
-        print('open tab ping v4')
-
-        writer = csv.DictWriter(csvf, fieldnames=fields)
-        writer.writeheader()
-
-        for res in ping_v4:
-            writer.writerow(res) 
-
-    with open(tab_ping_v6, 'w') as csvf:
-        print('open tab ping v6')
-
-        writer = csv.DictWriter(csvf, fieldnames=fields)
-        writer.writeheader()
-
-        for res in ping_v6:
-            writer.writerow(res)
-
-#------------------------------------------------------------
-def plot_rtt():
-    pass
 #------------------------------------------------------------
 
 def coordinates_range(mini, maxi):
@@ -342,11 +283,19 @@ def main():
     dest_file = 'dest_probes.csv'
 
     target_ip_type = ['address_v4', 'address_v6']
-
+    """
     msm_infos = [{'type_msm': 'ping', 'list_file': 'ping_list.csv', 'results_file': results_dir + 'ping_results.txt'}, 
         {'type_msm': 'traceroute', 'list_file': 'traceroute_list.csv', 'results_file': results_dir + 'traceroute_results.txt'}]
 
     eda_tab = {'ping': {'v4': results_dir + 'ping_tab_4.csv', 'v6': results_dir + 'ping_tab_6.csv'}}
+    """
+ 
+    geo_msm_list = [geo.GeoPing(type_msm="ping", results_dir=results_dir, plots_dir=plots_dir, 
+                    list_msm_file=results_dir + "ping_list.csv", results_file=results_dir + "ping_results.txt"),
+                geo.GeoTraceroute(type_msm="traceroute", results_dir=results_dir, plots_dir=plots_dir, 
+                    list_msm_file=results_dir + "traceroute_list.csv", results_file=results_dir + "traceroute_results.txt")]
+
+    #geo_msm_list = [geo_ping, geo_traceroute]
 
     find_probes(dest_file, lat_lte_dst, lat_gte_dst, lon_lte_dst, lon_gte_dst, is_target=True, optional_fields='measurements')
     find_probes(src_file, lat_lte_src, lat_gte_src, lon_lte_src, lon_gte_src)
@@ -357,10 +306,10 @@ def main():
     #print('dest_probe', dest_probes)
 
     #header measurements list file
-    fieldnames = ['msm_id', 'msm_result', 'target', 'target_ip', 'msm_type']
+    fieldnames = ['msm_id', 'target', 'target_ip', 'msm_type']  #'msm_result',
 
-    for msm in msm_infos:
-        write_header_csv(msm['list_file'], fieldnames)
+    for msm in geo_msm_list:
+        write_header_csv(msm.list_msm_file, fieldnames)
 
     with open(dest_file) as csvf:
         """
@@ -370,32 +319,33 @@ def main():
         csvReader = csv.DictReader(csvf)
         for row in csvReader:
             for type_ip in target_ip_type:
-                if row[type_ip]:    # != 'None':
-                    for msm in msm_infos:
-                        find_msm_list(msm['list_file'], msm['type_msm'], row[type_ip], start_time, stop_time)
+                if row[type_ip]:
+                    for msm in geo_msm_list:
+                        find_msm_list(msm.list_msm_file, msm.type_msm, row[type_ip], start_time, stop_time)
 
 
-    for msm in msm_infos:
+    for msm in geo_msm_list:
         """
         per ogni tipo di measurement, scorre la lista delle measurement precedentemente trovate e 
         per ognuna cerca gli eventuali risultati delle misure che partono dall'area sorgente verso
-        l'area destinazione precedentemente selezionate
+        l'area destinazione scelte
         """        
-        open(msm['results_file'], 'w').close()  # create or drop an existing file
+        open(msm.results_file, 'w').close()  # create or drop an existing file
 
-        with open(msm['list_file']) as csvf:
+        with open(msm.list_msm_file) as csvf:
             csvReader = csv.DictReader(csvf)
 
             for row in csvReader:
-                find_msm_results(msm['results_file'], row['msm_id'], start_time, stop_time)
+                find_msm_results(msm, row['msm_id'], start_time, stop_time)
 
-    for msm in msm_infos:
+    for geo_msm in geo_msm_list:
         print('msm in', msm)
-        if msm['type_msm'] == 'ping':
-            print('type_ping')
-            parse_ping(msm['results_file'], eda_tab['ping']['v4'], eda_tab['ping']['v6'])
-        elif msm['type_msm'] == 'traceroute':
-            print('type_traceroute: eda not implemented yet')
+        #if isinstance(geo_msm, geo.GeoPing):
+        geo_msm.parse_msm(src_probes, dest_probes)
+        #geo_msm.write_tab_result()
+        geo_msm.eda_msm_result()
+        #else:
+        #    print("others type eda not implemented yet")
     
 if __name__ == '__main__':
     main()
