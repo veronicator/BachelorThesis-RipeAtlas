@@ -5,7 +5,7 @@ import csv
 import argparse
 from datetime import datetime
 from ripe.atlas.cousteau import AtlasResultsRequest
-from geo_msm import *
+from geo_msm import GeoPing
 
 ### Global ###
 base_url = "https://atlas.ripe.net/api/v2/"
@@ -72,14 +72,17 @@ def save_msm_list(msm_file, results):
     """
     global msm_ids_list
     #print("save_msm_list")
-    #with open(filename, 'w') as new_file:
-    #    csv.DictWriter(new_file, fieldnames=fields).writeheader()
+    #with open(filename, 'w') as results_file:
+    #    writer = csv.DictWriter(results_file, fieldnames=['msm_id', 'msm_result', 'target', 'target_ip', 'msm_type'])
+    #    writer.writerow(dict_res)
 
     with open(msm_file, 'a') as results_file:
         
         for res in results['results']:
             if res['id'] not in msm_ids_list:
                 msm_ids_list.append(res['id'])
+                #dict_res = {'msm_id': res['id'], 'msm_result': res['result'], 'target': res['target'], 'target_ip': res['target_ip'], 'msm_type': res['type']}
+                #
                 str_res = str(res['id']) + "," + str(res['result']) + "," + str(res['target']) + "," + str(res['target_ip']) + "," + str(res['type']) + ";\n"
                         
                 results_file.write(str_res)
@@ -378,12 +381,13 @@ def main():
         per ognuna cerca gli eventuali risultati delle misure che partono dall'area sorgente verso
         l'area destinazione precedentemente selezionate
         """        
+        open(msm['results_file'], 'w').close()  # create or drop an existing file
+
         with open(msm['list_file']) as csvf:
             csvReader = csv.DictReader(csvf)
-            open(msm['results_file'], 'w').close()  # create or drop an existing file
 
             for row in csvReader:
-                find_msm_results(msm['results_file'], row['msm_result'], start_time, stop_time)
+                find_msm_results(msm['results_file'], row['msm_id'], start_time, stop_time)
 
     for msm in msm_infos:
         print('msm in', msm)
