@@ -7,6 +7,10 @@ msm_id,target,target_ip,msm_type
 10696149,de-rgm-as24940.anchors.atlas.ripe.net,88.198.173.54,ping
 10696143,de-rgm-as24940.anchors.atlas.ripe.net,2a01:4f8:de::54,ping
 10696152,de-rgm-as24940.anchors.atlas.ripe.net,2a01:4f8:de::54,ping
+17605579,it-men-as50178.anchors.atlas.ripe.net,185.161.192.39,ping
+17605777,it-men-as50178.anchors.atlas.ripe.net,185.161.192.39,ping
+17605588,it-men-as50178.anchors.atlas.ripe.net,2a07:c700:0:103::a001,ping
+17605781,it-men-as50178.anchors.atlas.ripe.net,2a07:c700:0:103::a001,ping
 22372627,de-rgm-as197540.anchors.atlas.ripe.net,185.244.192.10,ping
 22374321,de-rgm-as197540.anchors.atlas.ripe.net,185.244.192.10,ping
 22372630,de-rgm-as197540.anchors.atlas.ripe.net,2a03:4000:27:579:184b:5fff:fe50:3ee3,ping

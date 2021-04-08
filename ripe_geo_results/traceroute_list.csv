@@ -7,6 +7,10 @@ msm_id,target,target_ip,msm_type
 10696148,de-rgm-as24940.anchors.atlas.ripe.net,88.198.173.54,traceroute
 10696142,de-rgm-as24940.anchors.atlas.ripe.net,2a01:4f8:de::54,traceroute
 10696151,de-rgm-as24940.anchors.atlas.ripe.net,2a01:4f8:de::54,traceroute
+17605578,it-men-as50178.anchors.atlas.ripe.net,185.161.192.39,traceroute
+17605776,it-men-as50178.anchors.atlas.ripe.net,185.161.192.39,traceroute
+17605587,it-men-as50178.anchors.atlas.ripe.net,2a07:c700:0:103::a001,traceroute
+17605780,it-men-as50178.anchors.atlas.ripe.net,2a07:c700:0:103::a001,traceroute
 22372626,de-rgm-as197540.anchors.atlas.ripe.net,185.244.192.10,traceroute
 22374320,de-rgm-as197540.anchors.atlas.ripe.net,185.244.192.10,traceroute
 22372629,de-rgm-as197540.anchors.atlas.ripe.net,2a03:4000:27:579:184b:5fff:fe50:3ee3,traceroute

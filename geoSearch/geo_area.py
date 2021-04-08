@@ -74,6 +74,13 @@ class GeoArea:
         
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    def write_header_msm_list(self, list_msm_file):
+
+        fieldnames = ['msm_id', 'target', 'target_ip', 'msm_type']  #'msm_result',
+        write_header_csv(list_msm_file, fieldnames)
+
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     def save_msm_list(self, msm_file, results):
         """
         salva in 'msm_file' la lista delle measurement contenute in 'results'
@@ -93,7 +100,7 @@ class GeoArea:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def find_dest(self, probes_file, optional_fields = None):
+    def find_dest(self, probes_file, optional_fields = 'measurements'):
         print("find dest")
         self.find_probes(probes_file, self.lat_lte_dst, self.lat_gte_dst, self.lon_lte_dst, self.lon_gte_dst, 
                         is_target = True, optional_fields = optional_fields)
@@ -128,7 +135,7 @@ class GeoArea:
             parameters['optional_fields'] = optional_fields
 
         try:
-            result = requests.get(base_url + 'probes/', params=parameters)
+            result = requests.get(self.base_url + 'probes/', params=parameters)
             print('probes url', result.url)
             result = result.json()
             self.save_probes(probes_file, fieldnames, result, is_target)
@@ -158,7 +165,7 @@ class GeoArea:
         for i in range(2):
 
             try:
-                msm_list = requests.get(base_url + 'measurements/', params=parameters)
+                msm_list = requests.get(self.base_url + 'measurements/', params=parameters)
                 #print('msm url', msm_list.url)
                 msm_list = msm_list.json()
                 #print(msm_list)

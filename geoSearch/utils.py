@@ -11,7 +11,8 @@ def coordinates_range(mini, maxi):
     """Return function handle of an argument type function for 
        ArgumentParser checking a float range: mini <= arg <= maxi
          mini - maximum acceptable argument
-         maxi - maximum acceptable argument"""
+         maxi - maximum acceptable argument
+    """
 
     # Define the function with default arguments
     def float_range_checker(arg):
