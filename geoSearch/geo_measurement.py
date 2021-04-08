@@ -10,7 +10,10 @@ from ripe.atlas.sagan import PingResult, TracerouteResult
 #%matplotlib inline
 
 class GeoMeasurement:
-    """ attributes:
+    """ 
+    parent class for all measurement type classes
+
+    attributes:
         type_msm
         results_dir = directory name for result files
         plots_dir = path/directory name for eda plot
@@ -25,8 +28,8 @@ class GeoMeasurement:
         self.plots_dir = kwargs.get("plots_dir", self.results_dir + "ripe_geo_plots/")
         self.list_msm_file = kwargs.get("list_msm_file",  self.results_dir + "msm_list.csv")
         self.results_file = kwargs.get("results_file", self.results_dir + "msm_results.txt")
-        self.eda_tab_v4 =  self.results_dir + kwargs.get("tab_msm_v4", self.type_msm + "_msm_v4.csv")
-        self.eda_tab_v6 =  self.results_dir + kwargs.get("tab_msm_v6", self.type_msm + "_msm_v6.csv")
+        self.eda_tab_v4 =  self.results_dir + kwargs.get("tab_msm_v4", self.type_msm + "_tab_v4.csv")
+        self.eda_tab_v6 =  self.results_dir + kwargs.get("tab_msm_v6", self.type_msm + "_tab_v6.csv")
         self.msm_v4 = []
         self.msm_v6 = []
 
@@ -41,6 +44,7 @@ class GeoMeasurement:
         pass
 
     def write_tab_result(self, fields, msm_result, eda_tab):
+        """ write to csv file the filter data to plot """
 
         with open(eda_tab, 'w') as csvf:
             print('open tab msm results')
@@ -53,14 +57,12 @@ class GeoMeasurement:
     
     def eda_plot_results(self, dataframe, x_data, y_data, name_figure, hue=None, row=None, col=None, palette="deep", 
                         legend='auto', kind_plot='scatter', height=10, aspect=1, dot_size=7):
+        """ drawing relational scatter plots """
         
         sns.set_theme()
 
-        plot = sns.relplot(
-                            data=dataframe, x=x_data, y=y_data, col=col, 
-                            kind=kind_plot, palette=palette, hue=hue, 
-                            legend=legend, s=dot_size, height=height, aspect=aspect
-        )
+        plot = sns.relplot(data=dataframe, x=x_data, y=y_data, col=col, kind=kind_plot, palette=palette, 
+                            hue=hue, legend=legend, s=dot_size, height=height, aspect=aspect)
 
         plot.set_axis_labels('Time (GMT)', 'RTT min (ms)')
         plt.savefig(name_figure)
@@ -73,7 +75,10 @@ class GeoMeasurement:
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class GeoPing(GeoMeasurement):
-    """ attributes:
+    """ 
+    ping measurements class
+
+    attributes:
         type_msm = "ping"
         results_dir = directory name for result files
         plots_dir = directory name for eda plot
@@ -82,7 +87,7 @@ class GeoPing(GeoMeasurement):
     """
 
     def __init__(self, type_msm="ping", **kwargs):
-        super().__init__(type_msm, tab_msm_v4="ping_tab_4.csv", tab_msm_v6="ping_tab_6.csv", **kwargs)
+        super().__init__(type_msm, tab_msm_v4="ping_tab_v4.csv", tab_msm_v6="ping_tab_v6.csv", **kwargs)
 
     def parse_msm(self, src_probes, dest_probes, **kwargs):
         """
@@ -91,7 +96,7 @@ class GeoPing(GeoMeasurement):
         print('parse_ping')
 
         with open(self.results_file) as results:
-            
+            # read file of results for parsing
             for res in results.readlines():
 
                 parsed_result = PingResult(res)
@@ -101,13 +106,17 @@ class GeoPing(GeoMeasurement):
 
                 if parsed_result.origin == src_probes[str(parsed_result.probe_id)]['address_v' + af]:
                     
-                    # vengono selezionati soltanti i risultati il cui indirizzo sorgente 
-                    # corrisponde all'attuale indirizzo della relativa probe,                            
-                    # tutti gli altri vengono scartati
+                    # only results whose source address matches the current address 
+                    # of the corresponding source probe are selected,
+                    # all other results are discarded
                     
-                    ping_res = {'af': parsed_result.af, 'ip_src': parsed_result.origin, 'ip_dest': parsed_result.destination_address, 
-                        'asn_src': src_probes[str(parsed_result.probe_id)]['asn_v' + af], 'asn_dest': dest_probes[parsed_result.destination_address], 
-                        'timestamp': parsed_result.created_timestamp, 'rtt_min': parsed_result.rtt_min}
+                    ping_res = {'af': parsed_result.af, 
+                                'ip_src': parsed_result.origin, 
+                                'ip_dest': parsed_result.destination_address, 
+                                'asn_src': src_probes[str(parsed_result.probe_id)]['asn_v' + af], 
+                                'asn_dest': dest_probes[parsed_result.destination_address], 
+                                'timestamp': parsed_result.created_timestamp, 
+                                'rtt_min': parsed_result.rtt_min}
                     
                     self.msm_v4.append(ping_res) if parsed_result.af == 4 else self.msm_v6.append(ping_res)
         
@@ -129,11 +138,13 @@ class GeoPing(GeoMeasurement):
         super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", kind_plot='scatter',
                                 height=7, aspect=1.5, dot_size=10, name_figure=self.plots_dir + type_af + "_rtt.png")
 
-        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", col="asn_src", hue="asn_dest", palette="deep", 
-                        legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, name_figure=self.plots_dir + type_af + "_asn_src.png")
+        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", col="asn_src", hue="asn_dest", 
+                        palette="deep", legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, 
+                        name_figure=self.plots_dir + type_af + "_asn_src.png")
 
-        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", col="asn_dest", hue="asn_src", palette="deep", 
-                        legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, name_figure=self.plots_dir + type_af + "_asn_dest.png")
+        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", col="asn_dest", hue="asn_src", 
+                        palette="deep", legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, 
+                        name_figure=self.plots_dir + type_af + "_asn_dest.png")
         
     def eda_msm_result(self):
         print("eda ping")

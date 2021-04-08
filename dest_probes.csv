@@ -120,7 +120,7 @@ prb_id,address_v4,address_v6,asn_v4,asn_v6,msm_url
 29639,80.138.203.2,2003:d8:8f22:df01:ee08:6bff:fe73:42f8,3320,3320,https://atlas.ripe.net/api/v2/probes/29639/measurements/?format=json
 29653,,,3320,3320,https://atlas.ripe.net/api/v2/probes/29653/measurements/?format=json
 29685,,,3320,,https://atlas.ripe.net/api/v2/probes/29685/measurements/?format=json
-29795,92.117.152.45,2001:16b8:3f8a:1400:ee08:6bff:fe73:41e2,8881,8881,https://atlas.ripe.net/api/v2/probes/29795/measurements/?format=json
+29795,92.117.147.14,2001:16b8:3f8a:1400:ee08:6bff:fe73:41e2,8881,8881,https://atlas.ripe.net/api/v2/probes/29795/measurements/?format=json
 29973,91.40.26.39,2003:cb:cf02:9800:ee08:6bff:fe73:4300,3320,3320,https://atlas.ripe.net/api/v2/probes/29973/measurements/?format=json
 29994,87.162.62.114,2003:cb:cf0e:e400:ee08:6bff:fe73:2700,3320,3320,https://atlas.ripe.net/api/v2/probes/29994/measurements/?format=json
 30496,5.157.101.211,,35612,,https://atlas.ripe.net/api/v2/probes/30496/measurements/?format=json
@@ -169,10 +169,10 @@ prb_id,address_v4,address_v6,asn_v4,asn_v6,msm_url
 52761,178.27.181.34,,3209,,https://atlas.ripe.net/api/v2/probes/52761/measurements/?format=json
 52766,,,3320,3320,https://atlas.ripe.net/api/v2/probes/52766/measurements/?format=json
 52772,5.90.6.236,,30722,,https://atlas.ripe.net/api/v2/probes/52772/measurements/?format=json
-53015,5.90.6.236,,30722,,https://atlas.ripe.net/api/v2/probes/53015/measurements/?format=json
+53015,151.34.140.24,,1267,,https://atlas.ripe.net/api/v2/probes/53015/measurements/?format=json
 53313,83.137.41.20,,31394,,https://atlas.ripe.net/api/v2/probes/53313/measurements/?format=json
 53437,24.134.225.189,2a02:8106:207:3900:1:9bff:fe4f:9464,3209,3209,https://atlas.ripe.net/api/v2/probes/53437/measurements/?format=json
-53452,151.82.16.97,,1267,,https://atlas.ripe.net/api/v2/probes/53452/measurements/?format=json
+53452,151.34.140.24,,1267,,https://atlas.ripe.net/api/v2/probes/53452/measurements/?format=json
 53539,83.137.41.20,,31394,,https://atlas.ripe.net/api/v2/probes/53539/measurements/?format=json
 53674,84.152.113.195,2003:f0:170a:1000:1:18ff:fe29:a81c,3320,3320,https://atlas.ripe.net/api/v2/probes/53674/measurements/?format=json
 54402,,,3269,,https://atlas.ripe.net/api/v2/probes/54402/measurements/?format=json
@@ -195,7 +195,7 @@ prb_id,address_v4,address_v6,asn_v4,asn_v6,msm_url
 1001160,159.69.41.15,,24940,,https://atlas.ripe.net/api/v2/probes/1001160/measurements/?format=json
 1001201,93.104.107.192,,8767,,https://atlas.ripe.net/api/v2/probes/1001201/measurements/?format=json
 1001219,164.68.113.190,2a02:c207:2028:7799:7e00::5,51167,51167,https://atlas.ripe.net/api/v2/probes/1001219/measurements/?format=json
-1001242,151.82.16.97,,1267,,https://atlas.ripe.net/api/v2/probes/1001242/measurements/?format=json
+1001242,151.34.140.24,,1267,,https://atlas.ripe.net/api/v2/probes/1001242/measurements/?format=json
 1001419,94.130.104.77,2a01:4f8:c0c:d15c:8000:0:fa11:a5,24940,24940,https://atlas.ripe.net/api/v2/probes/1001419/measurements/?format=json
 1001484,79.42.122.100,fd38:8e5f:1275::1,3269,,https://atlas.ripe.net/api/v2/probes/1001484/measurements/?format=json
 1001500,,,1267,,https://atlas.ripe.net/api/v2/probes/1001500/measurements/?format=json

@@ -6,20 +6,16 @@ from datetime import datetime
 from geo_area import GeoArea
 from utils import coordinates_range
 
-### Global ###
+##### Global #####
 
 results_dir = './ripe_geo_results/'
 plots_dir = results_dir + 'ripe_geo_plots/'
 
-######### Main ########
+##### Main #####
 def main():
 
     # required arguments
     parser = argparse.ArgumentParser(description="search measurements between two areas")
-
-    # /home/veronica/Documents/test/env/bin/python /home/veronica/Documents/test/tesi/ripe_geo_search.py
-    # 28 29 77 78 48 49 7 8 2013-11-29\ 08:59:00 2013-11-30\ 00:00:00
-    # 9 49.5 11 11.5 38.5 39 -77.5 -77 2020-10-07\ 00:00:00 2020-10-07\ 01:00:00 
 
     # dest arguments
     parser.add_argument("lat_min_dest", help="destination lower latitude (DD)", type=coordinates_range(-90, 90))
@@ -72,57 +68,48 @@ def main():
 
     target_ip_type = ['address_v4', 'address_v6']
  
+    # list of GeoMeasurement classes 
     geo_msm_list = [geo.GeoPing(type_msm="ping", results_dir=results_dir, plots_dir=plots_dir, 
                     list_msm_file=results_dir + "ping_list.csv", results_file=results_dir + "ping_results.txt"),
                 geo.GeoTraceroute(type_msm="traceroute", results_dir=results_dir, plots_dir=plots_dir, 
                     list_msm_file=results_dir + "traceroute_list.csv", results_file=results_dir + "traceroute_results.txt")]
 
+    # filter target and source probes
     area.find_dest(dest_file, optional_fields='measurements')
     area.find_src(src_file)
-    
-    #find_probes(dest_file, lat_lte_dst, lat_gte_dst, lon_lte_dst, lon_gte_dst, is_target=True, optional_fields='measurements')
-    #find_probes(src_file, lat_lte_src, lat_gte_src, lon_lte_src, lon_gte_src)
 
     #probe_ids = join_list(probe_ids_list)
-    print("probe id", area.probe_ids_list)
-    #print('src_probe', src_probes)
-    #print('dest_probe', dest_probes)
-
-    #header measurements list file
-    #fieldnames = ['msm_id', 'target', 'target_ip', 'msm_type']  #'msm_result',
+    print("probe src id", area.probe_ids_list)
+    #print('src_probe', area.src_probes)
+    #print('dest_probe', area.dest_probes)
 
     for msm in geo_msm_list:
+        # write header to measurement list file
         area.write_header_msm_list(msm.list_msm_file)
-        #write_header_csv(msm.list_msm_file, fieldnames)
 
     with open(dest_file) as csvf:
-        """
-        per ogni nodo destinazione in dest_file cerca le measurements 
-        il cui target corrisponde all'indirizzo ip del nodo stesso
-        """        
+
+        # for each target node, search for measures that have as target, 
+        # the ip address (v4 and v6) of the node
         csvReader = csv.DictReader(csvf)
         for row in csvReader:
             for type_ip in target_ip_type:
                 if row[type_ip]:
                     for msm in geo_msm_list:
                         area.find_msm_list(msm.list_msm_file, msm.type_msm, row[type_ip])
-                        #find_msm_list(msm.list_msm_file, msm.type_msm, row[type_ip], start_time, stop_time)
 
 
     for msm in geo_msm_list:
-        """
-        per ogni tipo di measurement, scorre la lista delle measurement precedentemente trovate e 
-        per ognuna cerca gli eventuali risultati delle misure che partono dall'area sorgente verso
-        l'area destinazione scelte
-        """        
+        # for each type of measurement, scrolls through the list of 
+        # related measurements previously found and get the results
+               
         open(msm.results_file, 'w').close()  # create or drop an existing file
 
         with open(msm.list_msm_file) as csvf:
             csvReader = csv.DictReader(csvf)
 
             for row in csvReader:
-                area.find_msm_results(msm.results_file, row['msm_id'], start_time, stop_time)
-                #find_msm_results(msm, row['msm_id'], start_time, stop_time)
+                area.find_msm_results(msm.results_file, row['msm_id'])
 
     for geo_msm in geo_msm_list:
         print('msm in', msm)
@@ -131,7 +118,7 @@ def main():
         #geo_msm.write_tab_result()
         geo_msm.eda_msm_result()
         #else:
-        #    print("others type eda not implemented yet")
+        #    print("others type not implemented yet")
     
 if __name__ == '__main__':
     main()
