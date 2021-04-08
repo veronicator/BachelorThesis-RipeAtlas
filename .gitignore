@@ -1,7 +1,7 @@
 #virtualenv
 env/
 
-./dest_probes.csv
-./src_probes.csv
+dest_probes.csv
+src_probes.csv
 
-./ripe_geo_results/
+ripe_geo_results/
