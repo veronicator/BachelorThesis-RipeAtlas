@@ -1,13 +1,14 @@
 import os
-import requests
-import json
+#import requests
+#import json
 import csv
 import argparse
 from datetime import datetime
-from ripe.atlas.cousteau import AtlasResultsRequest
+#from ripe.atlas.cousteau import AtlasResultsRequest
 import geo_measurement as geo
-import utils
-
+from geo_area import GeoArea
+from utils import write_header_csv, coordinates_range
+"""
 ### Global ###
 base_url = "https://atlas.ripe.net/api/v2/"
 
@@ -19,7 +20,7 @@ msm_ids_list = []
 
 src_probes = dict()
 dest_probes = dict()
-
+"""
 #------------------------------------------------------------
 """
 def write_header_csv(filename, fields):
@@ -28,10 +29,10 @@ def write_header_csv(filename, fields):
         csv.DictWriter(new_file, fieldnames=fields).writeheader()
 """        
 #------------------------------------------------------------
-
+"""
 def save_probes(probes_file, fields, results, is_target = False):
     """
-        save in 'probes_file' some infos about probes in 'results'
+        #save in 'probes_file' some infos about probes in 'results'
     """
     #print("save_probes")
     global probe_ids_list
@@ -64,12 +65,12 @@ def save_probes(probes_file, fields, results, is_target = False):
 
                 #salva in memoria indirizzi ip e asn delle probe sorgenti, da utilizzare per l'eda
                 src_probes[str(dict_res.pop('prb_id'))] = dict_res
-    
+   """ 
 #------------------------------------------------------------
-
+"""
 def save_msm_list(msm_file, results):
     """
-    salva in 'msm_file' la lista delle measurement contenute in 'results'
+    #salva in 'msm_file' la lista delle measurement contenute in 'results'
     """
     global msm_ids_list
     #print("save_msm_list")
@@ -87,14 +88,14 @@ def save_msm_list(msm_file, results):
 
                 #str_res = str(res['id']) + "," + str(res['result']) + "," + str(res['target']) + "," + str(res['target_ip']) + "," + str(res['type']) + ";\n"       
                 #results_file.write(str_res)
-
+"""
 #------------------------------------------------------------
-
+"""
 def find_probes(probes_file, lat_lte, lat_gte, lon_lte, lon_gte, is_target = False, optional_fields = None):
     """
-    cerca le probe presenti in un'area geografica delimitata dalle latitudini e longitudini indicate,
-    is_target - True if destination area
-    probes_file - file in cui salvare i dettagli delle probe
+    # cerca le probe presenti in un'area geografica delimitata dalle latitudini e longitudini indicate,
+    # is_target - True if destination area
+    # probes_file - file in cui salvare i dettagli delle probe
     """
 
     fieldnames = ['prb_id', 'address_v4', 'address_v6', 'asn_v4', 'asn_v6']
@@ -122,14 +123,14 @@ def find_probes(probes_file, lat_lte, lat_gte, lon_lte, lon_gte, is_target = Fal
 
     except Exception as ex:
         print('probes request failed', ex)
-
+"""
 #------------------------------------------------------------
-
+"""
 def find_msm_list(msm_file, type_msm, target, start_time, stop_time, optional_fields = None):
     """
-    cerca le measurement di tipo 'type_msm' che hanno come destinazione l'indirizzo ip indicato da 'target': 
-    start < stop_time & (stop > start_time | status = ongoing)
-    'msm_file': file in cui salvare i risultati ottenuti
+    # cerca le measurement di tipo 'type_msm' che hanno come destinazione l'indirizzo ip indicato da 'target': 
+    # start < stop_time & (stop > start_time | status = ongoing)
+    # 'msm_file': file in cui salvare i risultati ottenuti
     """
     print("find_msm_list: ", type_msm, target)
 
@@ -157,34 +158,20 @@ def find_msm_list(msm_file, type_msm, target, start_time, stop_time, optional_fi
         if i == 0:
             del parameters['stop_time__gt']
             parameters['status'] = 2    #2: Ongoing measurements
-
+"""
 #------------------------------------------------------------
-
+"""
 def find_msm_results(geo_msm, msm_id, start_time, stop_time):
     """
-    ottiene i dati contenuti in 'result_url', filtrando i risultati per probe sorgenti e per timestamp
-    'results_file': file in cui salvare i risultati
-    'probes_ids_list': lista degli id delle probe nell'area sorgente
-    'start_time', 'stop_time': definiscono l'intervallo di tempo di cui si vogliono i risultati    
+    #    ottiene i dati contenuti in 'result_url', filtrando i risultati per probe sorgenti e per timestamp
+    #    'results_file': file in cui salvare i risultati
+    #    'probes_ids_list': lista degli id delle probe nell'area sorgente
+    #    'start_time', 'stop_time': definiscono l'intervallo di tempo di cui si vogliono i risultati    
     """
     global probe_ids_list
 
     print("find_msm_results")
-    """
-    parameters = {'probe_ids': probe_ids_list, 'start': start_time, 'stop': stop_time}
-    
-    try:
-        results = requests.get(result_url, params=parameters)
-        #print('result url', results.url)
-        results = results.json()
 
-        with open(results_file, 'a') as msm_result:
-            for res in results:
-                msm_result.write(json.dumps(res) + "\n")
-                
-    except:
-        print("find_results failed")
-    """
     kwargs = {
         "msm_id": msm_id,
         "start": start_time,
@@ -202,18 +189,20 @@ def find_msm_results(geo_msm, msm_id, start_time, stop_time):
                 #geo_msm.parse_msm(res, src_probes, dest_probes)
     else:
         print("find_results failed")
-
+"""
 #------------------------------------------------------------
-
+"""
 def coordinates_range(mini, maxi):
-    """Return function handle of an argument type function for 
-       ArgumentParser checking a float range: mini <= arg <= maxi
-         mini - maximum acceptable argument
-         maxi - maximum acceptable argument"""
+    """
+    #    Return function handle of an argument type function for 
+    #    ArgumentParser checking a float range: mini <= arg <= maxi
+    #        mini - maximum acceptable argument
+    #        maxi - maximum acceptable argument
+    """
 
     # Define the function with default arguments
     def float_range_checker(arg):
-        """New Type function for argparse - a float within predefined range."""
+        #New Type function for argparse - a float within predefined range.
 
         try:
             f = float(arg)
@@ -225,7 +214,7 @@ def coordinates_range(mini, maxi):
 
     # Return function handle to checking function
     return float_range_checker
-
+"""
 
 ######### Main ########
 def main():
@@ -274,6 +263,9 @@ def main():
         print("Invalid arguments")
         return
 
+    area = GeoArea(lat_lte_dst, lat_gte_dst, lon_lte_dst, lon_gte_dst,
+                lat_lte_src, lat_gte_src, lon_lte_src, lon_gte_src, start_time, stop_time)
+
     if not os.path.exists(results_dir):
         os.mkdir(results_dir)
 
@@ -290,11 +282,14 @@ def main():
                 geo.GeoTraceroute(type_msm="traceroute", results_dir=results_dir, plots_dir=plots_dir, 
                     list_msm_file=results_dir + "traceroute_list.csv", results_file=results_dir + "traceroute_results.txt")]
 
-    find_probes(dest_file, lat_lte_dst, lat_gte_dst, lon_lte_dst, lon_gte_dst, is_target=True, optional_fields='measurements')
-    find_probes(src_file, lat_lte_src, lat_gte_src, lon_lte_src, lon_gte_src)
+    area.find_dest(dest_file, optional_fields='measurements')
+    area.find_src(src_file)
+    
+    #find_probes(dest_file, lat_lte_dst, lat_gte_dst, lon_lte_dst, lon_gte_dst, is_target=True, optional_fields='measurements')
+    #find_probes(src_file, lat_lte_src, lat_gte_src, lon_lte_src, lon_gte_src)
 
     #probe_ids = join_list(probe_ids_list)
-    print("probe id", probe_ids_list)
+    print("probe id", area.probe_ids_list)
     #print('src_probe', src_probes)
     #print('dest_probe', dest_probes)
 
@@ -302,7 +297,7 @@ def main():
     fieldnames = ['msm_id', 'target', 'target_ip', 'msm_type']  #'msm_result',
 
     for msm in geo_msm_list:
-        utils.write_header_csv(msm.list_msm_file, fieldnames)
+        write_header_csv(msm.list_msm_file, fieldnames)
 
     with open(dest_file) as csvf:
         """
@@ -314,7 +309,8 @@ def main():
             for type_ip in target_ip_type:
                 if row[type_ip]:
                     for msm in geo_msm_list:
-                        find_msm_list(msm.list_msm_file, msm.type_msm, row[type_ip], start_time, stop_time)
+                        area.find_msm_list(msm.list_msm_file, msm.type_msm, row[type_ip])
+                        #find_msm_list(msm.list_msm_file, msm.type_msm, row[type_ip], start_time, stop_time)
 
 
     for msm in geo_msm_list:
@@ -329,12 +325,13 @@ def main():
             csvReader = csv.DictReader(csvf)
 
             for row in csvReader:
-                find_msm_results(msm, row['msm_id'], start_time, stop_time)
+                area.find_msm_results(msm.results_file, row['msm_id'], start_time, stop_time)
+                #find_msm_results(msm, row['msm_id'], start_time, stop_time)
 
     for geo_msm in geo_msm_list:
         print('msm in', msm)
         #if isinstance(geo_msm, geo.GeoPing):
-        geo_msm.parse_msm(src_probes, dest_probes)
+        geo_msm.parse_msm(area.src_probes, area.dest_probes)
         #geo_msm.write_tab_result()
         geo_msm.eda_msm_result()
         #else:
