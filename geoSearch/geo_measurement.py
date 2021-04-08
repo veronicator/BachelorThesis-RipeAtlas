@@ -70,6 +70,7 @@ class GeoMeasurement:
         print(self.type_msm, "eda not implemented yet")
         pass
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class GeoPing(GeoMeasurement):
     """ attributes:
@@ -89,13 +90,6 @@ class GeoPing(GeoMeasurement):
         """
         print('parse_ping')
 
-        """
-        with open(results_file) as results:
-        print('open results_file')
-
-        for res in results.readlines():
-            parsed_result = PingResult(res)
-        """
         with open(self.results_file) as results:
             
             for res in results.readlines():
@@ -160,6 +154,7 @@ class GeoPing(GeoMeasurement):
 
         self.eda_plot_results(df_ping, "ping_v6")
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 class GeoTraceroute(GeoMeasurement):
     def __init__(self, type_msm="traceroute", **kwargs):

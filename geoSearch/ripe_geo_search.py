@@ -6,6 +6,7 @@ import argparse
 from datetime import datetime
 from ripe.atlas.cousteau import AtlasResultsRequest
 import geo_measurement as geo
+import utils
 
 ### Global ###
 base_url = "https://atlas.ripe.net/api/v2/"
@@ -20,12 +21,12 @@ src_probes = dict()
 dest_probes = dict()
 
 #------------------------------------------------------------
-
+"""
 def write_header_csv(filename, fields):
 
     with open(filename, 'w') as new_file:
         csv.DictWriter(new_file, fieldnames=fields).writeheader()
-        
+"""        
 #------------------------------------------------------------
 
 def save_probes(probes_file, fields, results, is_target = False):
@@ -283,19 +284,11 @@ def main():
     dest_file = 'dest_probes.csv'
 
     target_ip_type = ['address_v4', 'address_v6']
-    """
-    msm_infos = [{'type_msm': 'ping', 'list_file': 'ping_list.csv', 'results_file': results_dir + 'ping_results.txt'}, 
-        {'type_msm': 'traceroute', 'list_file': 'traceroute_list.csv', 'results_file': results_dir + 'traceroute_results.txt'}]
-
-    eda_tab = {'ping': {'v4': results_dir + 'ping_tab_4.csv', 'v6': results_dir + 'ping_tab_6.csv'}}
-    """
  
     geo_msm_list = [geo.GeoPing(type_msm="ping", results_dir=results_dir, plots_dir=plots_dir, 
                     list_msm_file=results_dir + "ping_list.csv", results_file=results_dir + "ping_results.txt"),
                 geo.GeoTraceroute(type_msm="traceroute", results_dir=results_dir, plots_dir=plots_dir, 
                     list_msm_file=results_dir + "traceroute_list.csv", results_file=results_dir + "traceroute_results.txt")]
-
-    #geo_msm_list = [geo_ping, geo_traceroute]
 
     find_probes(dest_file, lat_lte_dst, lat_gte_dst, lon_lte_dst, lon_gte_dst, is_target=True, optional_fields='measurements')
     find_probes(src_file, lat_lte_src, lat_gte_src, lon_lte_src, lon_gte_src)
@@ -309,7 +302,7 @@ def main():
     fieldnames = ['msm_id', 'target', 'target_ip', 'msm_type']  #'msm_result',
 
     for msm in geo_msm_list:
-        write_header_csv(msm.list_msm_file, fieldnames)
+        utils.write_header_csv(msm.list_msm_file, fieldnames)
 
     with open(dest_file) as csvf:
         """

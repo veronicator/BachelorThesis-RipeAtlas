@@ -1,6 +1,6 @@
 ## tesiRipe
 ***
-# geo searching for measurements on Ripe Atlas db
+# geo searching for measurements on Ripe Atlas
 
 The scripts depend on this convention.
 
