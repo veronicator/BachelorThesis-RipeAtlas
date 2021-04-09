@@ -112,7 +112,7 @@ def main():
                 area.find_msm_results(msm.results_file, row['msm_id'])
 
     for geo_msm in geo_msm_list:
-        print('msm in', msm)
+        print('msm in', geo_msm)
         #if isinstance(geo_msm, geo.GeoPing):
         geo_msm.parse_msm(area.src_probes, area.dest_probes)
         #geo_msm.write_tab_result()
