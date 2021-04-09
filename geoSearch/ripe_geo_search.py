@@ -75,8 +75,8 @@ def main():
                     list_msm_file=results_dir + "traceroute_list.csv", results_file=results_dir + "traceroute_results.txt")]
 
     # filter target and source probes
-    area.find_dest(dest_file, optional_fields='measurements')
-    area.find_src(src_file)
+    area.get_dest(dest_file, optional_fields='measurements')
+    area.get_src(src_file)
 
     #probe_ids = join_list(probe_ids_list)
     print("probe src id", area.probe_ids_list)
@@ -96,7 +96,7 @@ def main():
             for type_ip in target_ip_type:
                 if row[type_ip]:
                     for msm in geo_msm_list:
-                        area.find_msm_list(msm.list_msm_file, msm.type_msm, row[type_ip])
+                        area.get_msm_list(msm.list_msm_file, msm.type_msm, row[type_ip])
 
 
     for msm in geo_msm_list:
@@ -109,7 +109,7 @@ def main():
             csvReader = csv.DictReader(csvf)
 
             for row in csvReader:
-                area.find_msm_results(msm.results_file, row['msm_id'])
+                area.get_msm_results(msm.results_file, row['msm_id'])
 
     for geo_msm in geo_msm_list:
         print('msm in', geo_msm)

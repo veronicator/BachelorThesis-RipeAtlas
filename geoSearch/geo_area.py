@@ -104,31 +104,31 @@ class GeoArea:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def find_dest(self, probes_file, optional_fields = 'measurements'):
-        """ find target probes """
+    def get_dest(self, probes_file, optional_fields = 'measurements'):
+        """ get target probes """
 
-        print("find dest")
-        self.find_probes(probes_file, self.lat_lte_dst, self.lat_gte_dst, self.lon_lte_dst, self.lon_gte_dst, 
+        print("get dest")
+        self.get_probes(probes_file, self.lat_lte_dst, self.lat_gte_dst, self.lon_lte_dst, self.lon_gte_dst, 
                         is_target = True, optional_fields = optional_fields)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def find_src(self, probes_file, optional_fields = None):
-        """ find source probes """
+    def get_src(self, probes_file, optional_fields = None):
+        """ get source probes """
 
-        print("find source")
-        self.find_probes(probes_file, self.lat_lte_src, self.lat_gte_src, self.lon_lte_src, self.lon_gte_src, 
+        print("get source")
+        self.get_probes(probes_file, self.lat_lte_src, self.lat_gte_src, self.lon_lte_src, self.lon_gte_src, 
                         is_target = False, optional_fields = optional_fields)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def find_probes(self, probes_file, lat_lte, lat_gte, lon_lte, lon_gte, is_target = False, optional_fields = None):
+    def get_probes(self, probes_file, lat_lte, lat_gte, lon_lte, lon_gte, is_target = False, optional_fields = None):
         """
-        Given latitude and longitude, find all probes in that geograpics area
+        Given latitude and longitude, get all probes in that geograpics area
         is_target - True if destination area
         probes_file - file where to save data probes
         """
-        # print("find_probes")
+        # print("get_probes")
 
         fieldnames = ['prb_id', 'address_v4', 'address_v6', 'asn_v4', 'asn_v6']
         if is_target:
@@ -155,13 +155,13 @@ class GeoArea:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def find_msm_list(self, msm_file, type_msm, target, optional_fields = None):
+    def get_msm_list(self, msm_file, type_msm, target, optional_fields = None):
         """
-        find measurements of type 'type_msm' that have as destination the ip address specified by 'target'
+        get measurements of type 'type_msm' that have as destination the ip address specified by 'target'
         start < stop_time & (stop > start_time | status = ongoing)
         'msm_file': file for list of measurements
         """
-        print("find_msm_list: ", type_msm, target)
+        print("get_msm_list: ", type_msm, target)
 
         parameters = {'format': 'json', 'type': type_msm, 'start_time__lte': self.stop_time, 'stop_time__gt': self.start_time,
                     'target_ip': target, 'page_size': 100}
@@ -182,7 +182,7 @@ class GeoArea:
                     msm_list = requests.get(msm_list['next']).json()
                     self.save_msm_list(msm_file, msm_list)
             except:
-                print("find_msm_list failed", i)
+                print("get_msm_list failed", i)
 
             if i == 0:
                 del parameters['stop_time__gt']
@@ -190,12 +190,12 @@ class GeoArea:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def find_msm_results(self, results_file, msm_id):
+    def get_msm_results(self, results_file, msm_id):
         """
         fetch results for measurement 'msm_id' and for source probes, from start_time to stop_time
         """
 
-        print("find_msm_results", msm_id)
+        print("get_msm_results", msm_id)
 
         kwargs = {
             "msm_id": msm_id,
@@ -212,7 +212,7 @@ class GeoArea:
                     #print('rtt', PingResult(res).rtt_max)
                     msm_result.write(json.dumps(res) + "\n")
         else:
-            print("find_results failed")
+            print("get_results failed")
 
 __all__ = (
     'GeoArea',
