@@ -1,6 +1,8 @@
 #virtualenv
 env/
 
+.vscode/
+
 dest_probes.csv
 src_probes.csv
 
