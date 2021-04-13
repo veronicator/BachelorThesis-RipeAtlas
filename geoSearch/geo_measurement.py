@@ -64,7 +64,7 @@ class GeoMeasurement:
         plot = sns.relplot(data=dataframe, x=x_data, y=y_data, col=col, kind=kind_plot, palette=palette, 
                             hue=hue, legend=legend, s=dot_size, height=height, aspect=aspect)
 
-        plot.set_axis_labels('Time (GMT)', 'RTT min (ms)')
+        plot.set_axis_labels('Time (UTC)', 'RTT min (ms)')
         plt.savefig(name_figure)
         plt.figure()
     
@@ -129,7 +129,7 @@ class GeoPing(GeoMeasurement):
 
         super().write_tab_result(fields, self.msm_v4, self.eda_tab_v4)
 
-        GeoMeasurement.write_tab_result(self, fields, self.msm_v6, self.eda_tab_v6)
+        super().write_tab_result(fields, self.msm_v6, self.eda_tab_v6)
 
     def eda_plot_results(self, df_ping, type_af, **kwargs):
 
