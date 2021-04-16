@@ -55,7 +55,7 @@ class GeoMeasurement:
             for res in msm_result:
                 writer.writerow(res) 
     
-    def eda_plot_results(self, dataframe, x_data, y_data, name_figure, hue=None, row=None, col=None, palette="deep", 
+    def eda_plot_results(self, dataframe, x_data, y_data, x_name, y_name, name_figure, hue=None, row=None, col=None, palette="deep", 
                         legend='auto', kind_plot='scatter', height=10, aspect=1, dot_size=7):
         """ drawing relational scatter plots """
         
@@ -64,7 +64,8 @@ class GeoMeasurement:
         plot = sns.relplot(data=dataframe, x=x_data, y=y_data, col=col, kind=kind_plot, palette=palette, 
                             hue=hue, legend=legend, s=dot_size, height=height, aspect=aspect)
 
-        plot.set_axis_labels('Time (UTC)', 'RTT min (ms)')
+        #plot.set_axis_labels('Time (UTC)', 'RTT min (ms)')
+        plot.set_axis_labels(x_name, y_name)
         plt.savefig(name_figure)
         plt.figure()
     
@@ -135,14 +136,14 @@ class GeoPing(GeoMeasurement):
 
         df_ping['timestamp'] = pd.to_datetime(arg=df_ping['timestamp'], unit='s')
 
-        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", kind_plot='scatter',
+        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", x_name="Time (UTC)", y_name="RTT min (ms)", kind_plot='scatter',
                                 height=7, aspect=1.5, dot_size=10, name_figure=self.plots_dir + type_af + "_rtt.png")
 
-        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", col="asn_src", hue="asn_dest", 
+        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", x_name="Time (UTC)", y_name="RTT min (ms)", col="asn_src", hue="asn_dest", 
                         palette="deep", legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, 
                         name_figure=self.plots_dir + type_af + "_asn_src.png")
 
-        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", col="asn_dest", hue="asn_src", 
+        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", x_name="Time (UTC)", y_name="RTT min (ms)", col="asn_dest", hue="asn_src", 
                         palette="deep", legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, 
                         name_figure=self.plots_dir + type_af + "_asn_dest.png")
         
