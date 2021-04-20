@@ -204,14 +204,17 @@ class GeoArea:
             "probe_ids": self.probe_ids_list
         }
 
-        is_success, results = AtlasResultsRequest(**kwargs).create()    #from ripe.atlas.cousteau
+        try:
+            is_success, results = AtlasResultsRequest(**kwargs).create()    #from ripe.atlas.cousteau
 
-        if is_success:
-            with open(results_file, 'a') as msm_result:
-                for res in results:
-                    #print('rtt', PingResult(res).rtt_max)
-                    msm_result.write(json.dumps(res) + "\n")
-        else:
+            if is_success:
+                with open(results_file, 'a') as msm_result:
+                    for res in results:
+                        #print('rtt', PingResult(res).rtt_max)
+                        msm_result.write(json.dumps(res) + "\n")
+            else:
+                print("get_results is not success")
+        except:
             print("get_results failed")
 
 __all__ = (
