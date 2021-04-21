@@ -4,7 +4,7 @@ import csv
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from ripe.atlas.sagan import PingResult, TracerouteResult
+from ripe.atlas.sagan import PingResult
 
 # Comment this if the data visualisations doesn't work on your side
 #%matplotlib inline
@@ -34,10 +34,10 @@ class GeoMeasurement:
         self.msm_v6 = []
 
         if not os.path.exists(self.results_dir):
-            os.mkdir(results_dir)
+            os.mkdir(self.results_dir)
 
         if not os.path.exists(self.plots_dir):
-            os.mkdir(plots_dir)
+            os.mkdir(self.plots_dir)
     
     def parse_msm(self, src_probes, dest_probes, **kwargs):
         print(self.type_msm, "parse not implemented yet")
@@ -64,8 +64,9 @@ class GeoMeasurement:
         plot = sns.relplot(data=dataframe, x=x_data, y=y_data, col=col, kind=kind_plot, palette=palette, 
                             hue=hue, legend=legend, s=dot_size, height=height, aspect=aspect)
 
-        #plot.set_axis_labels('Time (UTC)', 'RTT min (ms)')
         plot.set_axis_labels(x_name, y_name)
+        #plt.legend(loc="center left", bbox_to_anchor=(1.2, 1), labels="")
+        plt.tight_layout()
         plt.savefig(name_figure)
         plt.figure()
     
