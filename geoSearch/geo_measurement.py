@@ -28,8 +28,9 @@ class GeoMeasurement:
         self.plots_dir = kwargs.get("plots_dir", self.results_dir + "ripe_geo_plots/")
         self.list_msm_file = kwargs.get("list_msm_file",  self.results_dir + "msm_list.csv")
         self.results_file = kwargs.get("results_file", self.results_dir + "msm_results.txt")
-        self.eda_tab_v4 =  self.results_dir + kwargs.get("tab_msm_v4", self.type_msm + "_tab_v4.csv")
-        self.eda_tab_v6 =  self.results_dir + kwargs.get("tab_msm_v6", self.type_msm + "_tab_v6.csv")
+        eda_tab_v4 =  self.results_dir + kwargs.get("tab_msm_v4", self.type_msm + "_tab_v4.csv")
+        eda_tab_v6 =  self.results_dir + kwargs.get("tab_msm_v6", self.type_msm + "_tab_v6.csv")
+        self.eda_tab = {self.type_msm + '_v4': eda_tab_v4, self.type_msm + '_v6': eda_tab_v6}
         self.msm_v4 = []
         self.msm_v6 = []
 
@@ -75,6 +76,7 @@ class GeoMeasurement:
         pass
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 class GeoPing(GeoMeasurement):
     """ 
@@ -124,14 +126,15 @@ class GeoPing(GeoMeasurement):
         
         self.write_tab_result()
 
-
     def write_tab_result(self):
 
         fields = ['af','ip_src','ip_dest','asn_src','asn_dest','timestamp','rtt_min']
 
-        super().write_tab_result(fields, self.msm_v4, self.eda_tab_v4)
+        super().write_tab_result(fields, self.msm_v4, self.eda_tab['ping_v4'])
+        # super().write_tab_result(fields, self.msm_v4, self.eda_tab_v4)
 
-        super().write_tab_result(fields, self.msm_v6, self.eda_tab_v6)
+        super().write_tab_result(fields, self.msm_v6, self.eda_tab['ping_v6'])
+        # super().write_tab_result(fields, self.msm_v6, self.eda_tab_v6)
 
     def eda_plot_results(self, df_ping, type_af, **kwargs):
 
@@ -140,16 +143,27 @@ class GeoPing(GeoMeasurement):
         super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", x_name="Time (UTC)", y_name="RTT min (ms)", kind_plot='scatter',
                                 height=7, aspect=1.5, dot_size=10, name_figure=self.plots_dir + type_af + "_rtt.png")
 
-        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", x_name="Time (UTC)", y_name="RTT min (ms)", col="asn_src", hue="asn_dest", 
-                        palette="deep", legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, 
-                        name_figure=self.plots_dir + type_af + "_asn_src.png")
+        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", x_name="Time (UTC)", y_name="RTT min (ms)", col="asn_src", 
+                                hue="asn_dest", palette="deep", legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, 
+                                name_figure=self.plots_dir + type_af + "_asn_src.png")
 
-        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", x_name="Time (UTC)", y_name="RTT min (ms)", col="asn_dest", hue="asn_src", 
-                        palette="deep", legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, 
-                        name_figure=self.plots_dir + type_af + "_asn_dest.png")
+        super().eda_plot_results(df_ping, x_data="timestamp", y_data="rtt_min", x_name="Time (UTC)", y_name="RTT min (ms)", col="asn_dest", 
+                                hue="asn_src", palette="deep", legend='full', kind_plot='scatter', height=7, aspect=1.5, dot_size=10, 
+                                name_figure=self.plots_dir + type_af + "_asn_dest.png")
         
     def eda_msm_result(self):
         print("eda ping")
+        for tab in self.eda_tab:
+            df_ping = pd.read_csv(eda_tab[tab])
+            print(tab)
+            print(df_ping.head())
+            print("describe rtt_min", tab, "\n", df_ping['rtt_min'].describe())
+            print('asn_src:', df_ping['asn_src'].nunique()) # Count distinct observations over requested axis.
+            print('asn_dest:', df_ping['asn_dest'].nunique())
+
+            self.eda_plot_results(df_ping, tab)
+
+        """
         df_ping = pd.read_csv(self.eda_tab_v4)    #return pandas.DataFrame
         print(df_ping.head())     #.tail(n=row to select)/.head(n)
         #print("get", df_ping_4.get('asn_src'))
@@ -166,9 +180,11 @@ class GeoPing(GeoMeasurement):
         print('asn_dest_v6:', df_ping['asn_dest'].nunique())
 
         self.eda_plot_results(df_ping, "ping_v6")
+        """
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
+
 class GeoTraceroute(GeoMeasurement):
     def __init__(self, type_msm="traceroute", **kwargs):
         super().__init__(type_msm, **kwargs)

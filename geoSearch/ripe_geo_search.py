@@ -80,9 +80,14 @@ def main():
 
     #probe_ids = join_list(probe_ids_list)
     print("probe src id", area.probe_ids_list)
+    if not area.dest_probes or not area.src_probes:
+        print("no destination or source probes found")
+        return
+    """
     if not area.probe_ids_list:
         print("no source probes found")
         return
+    """
     #print('src_probe', area.src_probes)
     #print('dest_probe', area.dest_probes)
 
