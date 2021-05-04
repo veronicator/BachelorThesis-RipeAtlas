@@ -4,6 +4,7 @@ import csv
 from utils import write_header_csv
 from ripe.atlas.cousteau import AtlasResultsRequest
 
+
 class GeoArea:
     """
     the class contains geographic coordinates, time interval and methods used for search
@@ -45,14 +46,15 @@ class GeoArea:
         """
         save in 'probes_file' some data about probes
         """
-        #print("save_probes")
+        # print("save_probes")
 
         with open(probes_file, 'a') as results_file:
             writer = csv.DictWriter(results_file, fieldnames=fields)
 
             for res in results['results']:
                 # useful data probes
-                dict_res = {'prb_id': res['id'], 'address_v4': res['address_v4'], 'address_v6': res['address_v6'], 'asn_v4': res['asn_v4'], 'asn_v6': res['asn_v6']}
+                dict_res = {'prb_id': res['id'], 'address_v4': res['address_v4'], 'address_v6': res['address_v6'], 
+                            'asn_v4': res['asn_v4'], 'asn_v6': res['asn_v6']}
                 if is_target:
                     dict_res['msm_url'] = res['measurements']
 
@@ -80,7 +82,7 @@ class GeoArea:
 
     def write_header_msm_list(self, list_msm_file):
 
-        fieldnames = ['msm_id', 'target', 'target_ip', 'msm_type']  #'msm_result',
+        fieldnames = ['msm_id', 'target', 'target_ip', 'msm_type']  # 'msm_result',
         write_header_csv(list_msm_file, fieldnames)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,7 +91,7 @@ class GeoArea:
         """
         save in 'msm_file' the list of measurements
         """
-        #print("save_msm_list")
+        # print("save_msm_list")
 
         with open(msm_file, 'a') as results_file:
 
@@ -98,8 +100,8 @@ class GeoArea:
             for res in results['results']:
                 if res['id'] not in self.msm_ids_list:
                     self.msm_ids_list.append(res['id'])
-                        #'msm_result': res['result'], 
                     dict_res = {'msm_id': res['id'], 'target': res['target'], 'target_ip': res['target_ip'], 'msm_type': res['type']}
+                        # 'msm_result': res['result'], 
                     writer.writerow(dict_res)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,7 +126,7 @@ class GeoArea:
 
     def get_probes(self, probes_file, lat_lte, lat_gte, lon_lte, lon_gte, is_target = False, optional_fields = None):
         """
-        Given latitude and longitude, get all probes in that geograpics area
+        Given latitude and longitude, get all probes in that geographic area
         is_target - True if destination area
         probes_file - file where to save data probes
         """
@@ -136,7 +138,8 @@ class GeoArea:
 
         write_header_csv(probes_file, fieldnames)
 
-        parameters = {'format': 'json', 'latitude__lte': lat_lte, 'latitude__gte': lat_gte, 'longitude__lte': lon_lte, 'longitude__gte': lon_gte, 'page_size': 100}
+        parameters = {'format': 'json', 'latitude__lte': lat_lte, 'latitude__gte': lat_gte, 
+                    'longitude__lte': lon_lte, 'longitude__gte': lon_gte, 'page_size': 100}
         if optional_fields is not None:
             parameters['optional_fields'] = optional_fields
 
@@ -172,10 +175,10 @@ class GeoArea:
 
             try:
                 msm_list = requests.get(self.base_url + 'measurements/', params=parameters)
-                #print('msm url', msm_list.url)
+                # print('msm url', msm_list.url)
                 msm_list = msm_list.json()
-                #print(msm_list)
-                #print("msm_count", msm_list['count'])
+                # print(msm_list)
+                # print("msm_count", msm_list['count'])
                 self.save_msm_list(msm_file, msm_list)
 
                 while msm_list['next']:
@@ -186,7 +189,7 @@ class GeoArea:
 
             if i == 0:
                 del parameters['stop_time__gt']
-                parameters['status'] = 2    #2: Ongoing measurements
+                parameters['status'] = 2    # 2: Ongoing measurements
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -205,17 +208,18 @@ class GeoArea:
         }
 
         try:
-            is_success, results = AtlasResultsRequest(**kwargs).create()    #from ripe.atlas.cousteau
+            is_success, results = AtlasResultsRequest(**kwargs).create()    # from ripe.atlas.cousteau
 
             if is_success:
                 with open(results_file, 'a') as msm_result:
                     for res in results:
-                        #print('rtt', PingResult(res).rtt_max)
+                        # print('rtt', PingResult(res).rtt_max)
                         msm_result.write(json.dumps(res) + "\n")
             else:
                 print("get_results is not success")
         except:
             print("get_results failed")
+
 
 __all__ = (
     'GeoArea',

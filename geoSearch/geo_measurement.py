@@ -6,6 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from ripe.atlas.sagan import PingResult
 
+
 # Comment this if the data visualisations doesn't work on your side
 #%matplotlib inline
 
@@ -44,7 +45,7 @@ class GeoMeasurement:
         print(self.type_msm, "parse not implemented yet")
         pass
 
-    def write_tab_result(self, fields, msm_result, eda_tab):
+    def write_tab_result(self, fields, msm_result, eda_tab, **kwargs):
         """ write to csv file the filter data to plot """
 
         with open(eda_tab, 'w') as csvf:
@@ -126,15 +127,13 @@ class GeoPing(GeoMeasurement):
         
         self.write_tab_result()
 
-    def write_tab_result(self):
+    def write_tab_result(self, **kwargs):
 
         fields = ['af','ip_src','ip_dest','asn_src','asn_dest','timestamp','rtt_min']
 
         super().write_tab_result(fields, self.msm_v4, self.eda_tab['ping_v4'])
-        # super().write_tab_result(fields, self.msm_v4, self.eda_tab_v4)
 
         super().write_tab_result(fields, self.msm_v6, self.eda_tab['ping_v6'])
-        # super().write_tab_result(fields, self.msm_v6, self.eda_tab_v6)
 
     def eda_plot_results(self, df_ping, type_af, **kwargs):
 
@@ -154,7 +153,7 @@ class GeoPing(GeoMeasurement):
     def eda_msm_result(self):
         print("eda ping")
         for tab in self.eda_tab:
-            df_ping = pd.read_csv(eda_tab[tab])
+            df_ping = pd.read_csv(self.eda_tab[tab])
             print(tab)
             print(df_ping.head())
             print("describe rtt_min", tab, "\n", df_ping['rtt_min'].describe())
@@ -162,25 +161,6 @@ class GeoPing(GeoMeasurement):
             print('asn_dest:', df_ping['asn_dest'].nunique())
 
             self.eda_plot_results(df_ping, tab)
-
-        """
-        df_ping = pd.read_csv(self.eda_tab_v4)    #return pandas.DataFrame
-        print(df_ping.head())     #.tail(n=row to select)/.head(n)
-        #print("get", df_ping_4.get('asn_src'))
-        print("describe rtt_min v4\n", df_ping['rtt_min'].describe())
-        print('asn_src_v4:', df_ping['asn_src'].nunique()) # Count distinct observations over requested axis.
-        print('asn_dest_v4:', df_ping['asn_dest'].nunique())
-
-        self.eda_plot_results(df_ping, "ping_v4")
-
-        df_ping = pd.read_csv(self.eda_tab_v6)    #return pandas.DataFrame
-        print(df_ping.head())
-        print("describe rtt_min v6\n", df_ping['rtt_min'].describe())
-        print('asn_src_v6:', df_ping['asn_src'].nunique()) # Count distinct observations over requested axis.
-        print('asn_dest_v6:', df_ping['asn_dest'].nunique())
-
-        self.eda_plot_results(df_ping, "ping_v6")
-        """
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
